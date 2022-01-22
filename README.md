@@ -1,38 +1,37 @@
-# Running the Project in Development Mode
+# Ejecutar el proyecto en modo de desarrollo
 
 `mvn spring-boot:run`
 
-Wait for the application to start
+Espere a que se inicie la aplicación
 
-Open http://localhost:8080/ to view the application.
+Abra http://localhost:8080/ para ver la aplicación.
 
-Default credentials are admin@vaadin.com/admin for admin access and
-barista@vaadin.com/barista for normal user access.
+Las credenciales predeterminadas son admin/admin para acceso de administrador y user/user para acceso de usuario normal.
 
-Note that when running in development mode, the application will not work in IE11.
+Tenga en cuenta que cuando se ejecuta en modo de desarrollo, la aplicación no funcionará en IE11.
 
-# Running Integration Tests and Linter
+# Ejecución de pruebas de integración y Linter
 
-Integration tests are implemented using TestBench. The tests take tens of minutes to run and are therefore included in a separate profile. We recommend running tests with a production build to minimize the chance of development time toolchains affecting test stability. To run the tests, execute
+Las pruebas de integración se implementan utilizando TestBench. Las pruebas tardan decenas de minutos en ejecutarse y, por lo tanto, se incluyen en un perfil separado. Recomendamos ejecutar pruebas con una compilación de producción para minimizar la posibilidad de que las cadenas de herramientas del tiempo de desarrollo afecten la estabilidad de la prueba. Para ejecutar las pruebas, ejecute
 
 `mvn verify -Pit,production`
 
-and make sure you have a valid TestBench license installed.
+y asegúrese de tener instalada una licencia válida de TestBench.
 
-Profile `it` adds the following parameters to run integration tests:
+Profile `it` agrega los siguientes parámetros para ejecutar pruebas de integración:
 ```sh
 -Dwebdriver.chrome.driver=path_to_driver
 -Dcom.vaadin.testbench.Parameters.runLocally=chrome
 ```
 
-if you would like to run a separate test make sure you have added these parameters to VM Options of JUnit run configuration
+si desea ejecutar una prueba separada, asegúrese de haber agregado estos parámetros a las Opciones de VM de la configuración de ejecución de JUnit
 
-Run linter to check frontend code by adding `-DrunLint` to build/run command.
+Ejecute linter para verificar el código de interfaz agregando `-DrunLint` al comando de compilación/ejecución.
 
-# Automatic Restart and Live Reload
+# Reinicio automático y recarga en vivo
 
-To activate spring-boot-devtools is needed to:
-1. Add spring-boot-devtools dependency
+Para activar spring-boot-devtools es necesario:
+1. Agregue la dependencia spring-boot-devtools
 ```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
@@ -41,7 +40,7 @@ To activate spring-boot-devtools is needed to:
     <scope>runtime</scope>
 </dependency>
 ```
-2. Fork the process used to run the application by changing spring-boot-maven-plugin configuration
+2. Bifurque el proceso utilizado para ejecutar la aplicación cambiando la configuración de spring-boot-maven-plugin
 ```xml
 <plugin>
     <groupId>org.springframework.boot</groupId>
@@ -52,73 +51,61 @@ To activate spring-boot-devtools is needed to:
     </configuration>
 </plugin>
 ```
-3. Optionally you might want to avoid the data generator to be run on each single reload, therefore, make H2 database store entities in file-system instead of in memory by adding the following lines to the `src/main/resources/application.properties`
+3. Opcionalmente, es posible que desee evitar que el generador de datos se ejecute en cada recarga individual, por lo tanto, haga que la base de datos H2 almacene entidades en el sistema de archivos en lugar de en la memoria agregando las siguientes líneas a `src/main/resources/application.properties`
 ```properties
-spring.datasource.url=jdbc:h2:file:~/bakery-test-data
+spring.datasource.url=jdbc:h2:file:~/test-data
 spring.jpa.hibernate.ddl-auto=update
 ```
-To trigger the restart it is needed to update classpath.
-In Eclipse it can be done automatically after save modified file.
-In IntelliJ IDEA can be done manually `Build -> Build Project`
+Para activar el reinicio, es necesario actualizar classpath.
+En Eclipse se puede hacer automáticamente después de guardar el archivo modificado.
+En IntelliJ IDEA se puede hacer manualmente `Build -> Build Project`
 
-Live reload is supported and browser extensions can be found at http://livereload.com/extensions/.
+Se admite la recarga en vivo y las extensiones del navegador se pueden encontrar en http://livereload.com/extensions/.
 
-# Running the Project in Production Mode
+# Ejecutar el proyecto en modo de producción
 
 `mvn spring-boot:run -Pproduction`
 
-The default mode when the application is built or started is 'development'. The 'production' mode is turned on by enabling the `production` profile when building or starting the app.
+El modo predeterminado cuando se construye o inicia la aplicación es 'desarrollo'. El modo de 'producción' se activa habilitando el perfil de 'producción' al compilar o iniciar la aplicación.
 
-In the 'production' mode all frontend resources of the application are passed through the `polymer build` command, which minifies them and outputs two versions: for ES5- and ES6-supporting browsers. That adds extra time to the build process, but reduces the total download size for clients and allows running the app in browsers that do not support ES6 (e.g. in Internet Explorer 11).
+En el modo de 'producción', todos los recursos de interfaz de la aplicación se pasan a través del comando 'construcción de polímero', que los minimiza y genera dos versiones: para navegadores compatibles con ES5 y ES6. Eso agrega tiempo adicional al proceso de compilación, pero reduce el tamaño total de descarga para los clientes y permite ejecutar la aplicación en navegadores que no son compatibles con ES6 (por ejemplo, en Internet Explorer 11).
 
-Note that if you switch between running in production mode and development mode, you need to do
+Tenga en cuenta que si cambia entre el modo de producción y el modo de desarrollo, debe hacer
 ```sh
 mvn clean
 ```
-before running in the other mode.
+ntes de ejecutar en el otro modo.
 
-# Running in Eclipse or IntelliJ
-As both IDEs support running Spring Boot applications you just have to import the project and select `com.examen.jorge.Application` as main class if not done automatically. Using an IDE will also allow you to speed up development even more. Just check https://vaadin.com/blog/developing-without-server-restarts.
+# Ejecutando en Eclipse o IntelliJ
+Como ambos IDE admiten la ejecución de aplicaciones Spring Boot, solo tiene que importar el proyecto y seleccionar `com.examen.jorge.Application` como clase principal si no se hace automáticamente. El uso de un IDE también le permitirá acelerar aún más el desarrollo. Simplemente consulte https://vaadin.com/blog/developing-without-server-restarts.
 
 ## IntelliJ < 2018
-Unfortunately, up to IntelliJ 2017 dependencies scoped as `provided` in the Maven POM will not be loaded on startup. As a workaround you will have to remove the scope definition of `spring-boot-starter-tomcat` and `javax.servlet-api` from the pom.xml.
+Desafortunadamente, hasta las dependencias de IntelliJ 2017 definidas como "proporcionadas" en Maven POM no se cargarán al inicio. Como solución, tendrá que eliminar la definición de alcance de `spring-boot-starter-tomcat` y `javax.servlet-api` del pom.xml.
 
-# Running Scalability Tests
+# Ejecución de pruebas de escalabilidad
 
-The Bakery App Starter includes scalability tests. Once you have deployed a production build of Bakery you can run them to check how the app behaves under load. The scalability tests can be run completely on your local machine, but you might as well want to run locally only the test agents while the Bakery app under test is deployed to an environment that is close to your production.
+Esta aplicacion incluye pruebas de escalabilidad. Una vez que haya implementado una compilación de producción de la aplicacion, puede ejecutarla para verificar cómo se comporta la aplicación bajo carga. Las pruebas de escalabilidad se pueden ejecutar completamente en su máquina local, pero también puede ejecutar localmente solo los agentes de prueba mientras la aplicación que se está probando se implementa en un entorno cercano a su producción.
 
-In order to run the scalability tests locally:
+Para ejecutar las pruebas de escalabilidad localmente:
 
-1. Make sure you are using Java 8 (Gatling Maven plugin does not yet work with Java 9+)
+1. Asegúrese de estar usando Java 8 (el complemento Gatling Maven aún no funciona con Java 9+)
 
-1. Build and start Bakery in the production mode (e.g. ```mvn clean spring-boot:run -DskipTests -Pproduction```)
+1. Cree e inicie la aplicacion en el modo de producción (por ejemplo, ```mvn clean spring-boot:run -DskipTests -Pproduction```)
 
-1. Open terminal in the project root
+1. Abrir terminal en la raíz del proyecto
 
-1. Start a test from the command line:
+1. Inicie una prueba desde la línea de comando:
 
     ```sh
     mvn -Pscalability gatling:test
     ```
 
-1. Test results are stored into target folder (e.g. to ```target/gatling/BaristaFlow-1487784042461/index.html```)
+1. Los resultados de la prueba se almacenan en la carpeta de destino (por ejemplo, en ```target/gatling/Flow-1487784042461/index.html```)
 
-1. By default the scalability test starts 100 user sessions at a 100 ms interval for one repeat, all of which connect to a locally running Bakery app. These defaults can be overridden with the `gatling.sessionCount`, `gatling.sessionStartInterval` `gatling.sessionRepeats`, and `gatling.baseUrl` system properties. See an example execution for 300 users started within 50 s:
+1. De forma predeterminada, la prueba de escalabilidad inicia 10 sesiones de usuario en un intervalo de 10 ms para una repetición, todas las cuales se conectan a una aplicación que se ejecuta localmente. Estos valores predeterminados se pueden anular con las propiedades del sistema `gatling.sessionCount`, `gatling.sessionStartInterval` `gatling.sessionRepeats` y `gatling.baseUrl`. Vea una ejecución de ejemplo para 300 usuarios iniciada en 50 s:
 
     ```sh
     mvn -Pscalability gatling:test -Dgatling.sessionCount=300 -Dgatling.sessionStartInterval=50
     ```
 
-Note: If you run Bakery with an in-memory database (like H2, which is the default), it will logically use more memory than when using an external database (like PostgreSQL). It is recommend to run scalability tests for Bakery only after you have configured it to use an external database.
-
-# License
-A paid Pro or Prime subscription is required for creating a new software project from this starter. After its creation, results can be used, developed and distributed freely, but licenses for the used commercial components are required during development. The starter or its parts cannot be redistributed as a code example or template.
-
-For full terms, see LICENSE
-## Pro components
-Pro components used in the starter are :
- - [Vaadin Crud](https://vaadin.com/components/vaadin-crud)
- - [Vaadin Charts](https://vaadin.com/components/vaadin-charts)
- - [Vaadin Confirm Dialog](https://vaadin.com/components/vaadin-confirm-dialog) 
-
- Also the tests are created using [Testbench](https://vaadin.com/testbench) library.
+Nota: si ejecuta la aplicacion con una base de datos en memoria (como H2, que es la predeterminada), lógicamente usará más memoria que cuando usa una base de datos externa (como PostgreSQL). Se recomienda ejecutar pruebas de escalabilidad para la aplicacion solo después de haberlo configurado para usar una base de datos externa.
