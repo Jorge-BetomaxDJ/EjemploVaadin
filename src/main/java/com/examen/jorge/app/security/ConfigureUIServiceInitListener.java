@@ -35,7 +35,6 @@ public class ConfigureUIServiceInitListener implements VaadinServiceInitListener
 		final boolean accessGranted = SecurityUtils.isAccessGranted(event.getNavigationTarget());
 		if (!accessGranted) {
 			if (SecurityUtils.isUserLoggedIn()) {
-				System.out.println("Logeo correcto");
 				event.rerouteToError(AccessDeniedException.class);
 			} else {
 				event.rerouteTo(LoginView.class);

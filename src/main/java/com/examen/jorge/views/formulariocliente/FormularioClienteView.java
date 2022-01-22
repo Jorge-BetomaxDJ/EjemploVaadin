@@ -23,6 +23,7 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -42,8 +43,8 @@ public class FormularioClienteView extends Div {
     private DatePicker fechaNacimiento = new DatePicker("Fecha de nacimiento");
     private PhoneNumberField celular = new PhoneNumberField("Celular");
 
-    private Button cancel = new Button("Cancelar");
-    private Button save = new Button("Guardar");
+    private Button btnCancelar = new Button("Cancelar");
+    private Button btnGuardar = new Button("Guardar");
 
     private Binder<Cliente> binder = new Binder<Cliente>(Cliente.class);
 
@@ -55,13 +56,35 @@ public class FormularioClienteView extends Div {
         add(createButtonLayout());
 
         binder.bindInstanceFields(this);
+        
+        binder.forField(nombre)
+	    	.withValidator(s -> s != null && !s.trim().isEmpty(), "Porfavor agrega nombre")
+	    	.bind(Cliente::getNombre, Cliente::setNombre);
+        
+        binder.forField(correoElectronico)
+			.withValidator(new EmailValidator("No es una dirección de correo electrónico válida."))
+			.bind(Cliente::getCorreoElectronico, Cliente::setCorreoElectronico);
+        
+        binder.forField(fechaNacimiento).asRequired("Porfavor agrega una fecha de nacimiento")
+			.withValidator(s -> s != null, "Porfavor agrega una fecha de nacimiento")
+			.bind(bean -> fechaNacimiento.getEmptyValue(), (bean, value) -> {
+				System.out.println(value);
+				bean.setFechaNacimiento(fechaNacimiento.getValue());
+			});  
+        
+        binder.forField(celular)
+    	.withValidator(s -> s != null && !s.trim().isEmpty(), "Porfavor agrega un telefono celular")
+    	.bind(Cliente::getCelular, Cliente::setCelular);
+        
         clearForm();
 
-        cancel.addClickListener(e -> clearForm());
-        save.addClickListener(e -> {
-            clienteService.update(binder.getBean());
-            Notification.show(binder.getBean().getClass().getSimpleName() + " guardado.");
-            clearForm();
+        btnCancelar.addClickListener(e -> clearForm());
+        btnGuardar.addClickListener(e -> {
+        	if (binder.validate().isOk()) {
+        		clienteService.update(binder.getBean());
+                Notification.show(binder.getBean().getClass().getSimpleName() + " guardado.");
+                clearForm();
+        	}
         });
     }
 
@@ -83,9 +106,9 @@ public class FormularioClienteView extends Div {
     private Component createButtonLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.addClassName("button-layout");
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        buttonLayout.add(save);
-        buttonLayout.add(cancel);
+        btnGuardar.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        buttonLayout.add(btnGuardar);
+        buttonLayout.add(btnCancelar);
         return buttonLayout;
     }
 
@@ -100,7 +123,7 @@ public class FormularioClienteView extends Div {
         public PhoneNumberField(String label) {
             setLabel(label);
             countryCode.setWidth("120px");
-            countryCode.setPlaceholder("Country");
+            countryCode.setPlaceholder("Lada");
             countryCode.setPattern("\\+\\d*");
             countryCode.setPreventInvalidInput(true);
             countryCode.setItems("+354", "+91", "+62", "+98", "+964", "+353", "+44", "+972", "+39", "+225");

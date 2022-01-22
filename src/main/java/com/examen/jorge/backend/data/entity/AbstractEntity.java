@@ -2,17 +2,16 @@ package com.examen.jorge.backend.data.entity;
 
 
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.validation.constraints.NotNull;
 
 
 @MappedSuperclass
 public abstract class AbstractEntity {
 
 	@Id
-    @GeneratedValue
-    @NotNull
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
     public Integer getId() {

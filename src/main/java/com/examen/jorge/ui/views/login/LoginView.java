@@ -14,6 +14,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.examen.jorge.app.security.SecurityUtils;
 import com.examen.jorge.views.clientes.ClientesView;
+import com.examen.jorge.views.formulariocliente.FormularioClienteView;
 
 @Route
 @PageTitle("Examen Jorge")
@@ -29,7 +30,7 @@ public class LoginView extends LoginOverlay
 		i18n.setHeader(new LoginI18n.Header());
 		i18n.getHeader().setTitle("Examen Jorge");
 		i18n.getHeader().setDescription(
-			"Entrar usando: admin + admin\n" + "          o    user + user");
+			"Entrar usando: admin + admin\n" + "    o    user + user");
 		i18n.setAdditionalInformation(null);
 		i18n.setForm(new LoginI18n.Form());
 		i18n.getForm().setSubmit("Entrar");
@@ -44,7 +45,7 @@ public class LoginView extends LoginOverlay
 	@Override
 	public void beforeEnter(BeforeEnterEvent event) {
 		if (SecurityUtils.isUserLoggedIn()) {
-			event.forwardTo(ClientesView.class);
+			event.forwardTo(FormularioClienteView.class);
 			//UI.getCurrent().navigate(ClientesView.class);
 		} else {
 			setOpened(true);

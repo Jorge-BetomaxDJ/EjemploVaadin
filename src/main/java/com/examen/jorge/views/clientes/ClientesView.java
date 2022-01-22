@@ -11,16 +11,21 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dependency.JavaScript;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.page.PendingJavaScriptResult;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
@@ -37,6 +42,7 @@ import org.vaadin.artur.helpers.CrudServiceDataProvider;
 @RouteAlias(value = "clientes", layout = MainView.class)
 @Secured(Role.ADMIN)
 @CssImport(value = "./styles/views/clientes.css")
+@JavaScript(value = "./js/calculaEdad.js")
 public class ClientesView extends Div implements BeforeEnterObserver {
 
     private final String CLIENTE_ID = "clienteID";
@@ -76,6 +82,18 @@ public class ClientesView extends Div implements BeforeEnterObserver {
         grid.addColumn("celular").setAutoWidth(true);
         grid.addColumn("correoElectronico").setAutoWidth(true);
         grid.addColumn("fechaNacimiento").setAutoWidth(true);
+        grid.addColumn(new ComponentRenderer<>(c -> {
+        	Div retun = new Div();
+        	if (c.getFechaNacimiento() != null) {
+        		PendingJavaScriptResult pendingJavaScriptResult = 
+            			getElement().executeJs("return calculaEdad($0)", c.getFechaNacimiento().toString());
+            	pendingJavaScriptResult.then(String.class, response -> {
+    				retun.add(response);
+    			});
+        	}
+        	return retun;
+        })).setHeader("Edad").setAutoWidth(true);
+        
         grid.setDataProvider(new CrudServiceDataProvider<>(clienteService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
